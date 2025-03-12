@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "voip-sttest"
+version = "0.1.0"
+description = "Library for VoIP tests on Python with voice recognition."
+authors = ["Dmitriy Noskov <pesycorm@yandex.ru>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+rtp = "^0.0.4"
+dtmf-py = "^0.1.3"
+fuzzywuzzy = "^0.18.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
