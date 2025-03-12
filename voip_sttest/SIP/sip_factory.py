@@ -4,7 +4,7 @@ import hashlib
 from enum import Enum, IntEnum
 from typing import Optional, Any, Callable
 
-from qa_voip_py.media.media import RTPProtocol, TransmitType, PayloadType
+from voip_sttest.media.media import RTPProtocol, TransmitType, PayloadType
 
 
 SIPCompatibleMethods = ["INVITE", "ACK", "BYE", "CANCEL", "OPTIONS", "REGISTER"]

@@ -9,9 +9,9 @@ from select import select
 from threading import Timer, Lock
 from typing import Callable, Optional
 
-from qa_voip_py.helpers.waiter import try_wait
-from qa_voip_py.media.media import PayloadType
-from qa_voip_py.SIP.sip_factory import SIPMessage, SIPMessageType, SIPStatus, SipFactory
+from voip_sttest.helpers.waiter import try_wait
+from voip_sttest.media.media import PayloadType
+from voip_sttest.SIP.sip_factory import SIPMessage, SIPMessageType, SIPStatus, SipFactory
 
 
 class _Counter:
