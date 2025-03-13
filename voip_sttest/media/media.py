@@ -415,8 +415,6 @@ class _MediaWrapper(_Media):
         ) as proc:
             ssrc = randint(0, (2**32) - 1)
             while True:
-                # Насколько мне известно, в RTP нет указания по поводу максимального размера payload части.
-                # 160 байт является просто наиболее оптимальным размером.
                 data = proc.stdout.read(160)
                 if len(data) == 0:
                     break
@@ -491,8 +489,7 @@ class _MediaWrapper(_Media):
             ivr_index,
         )
         if rd.get("local"):
-            return rd  # такие записи возвращаются в необработанном виде. используется для ивров вроде редиала.
-        # дальше ффууууу
+            return rd
         rd = tuple(*rd.items())
         if "__" in rd[0]:
             _rd_indexes = rd[0].split("__")

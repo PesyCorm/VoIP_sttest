@@ -2,7 +2,6 @@ import time
 import logging
 from threading import Lock
 
-from data.ivr_indexes import *
 from helpers.waiter import try_wait
 from SIP.sip_manager import SipFlow
 from SIP.sip_factory import SIPMessage
@@ -12,7 +11,7 @@ from media.media import TransmitType, _MediaWrapper
 logger = logging.getLogger(__name__)
 
 
-class CallState(Enum):
+class CallState:
     DIALING = "DIALING"
     RINGING = "RINGING"
     TRYING = "TRYING"
@@ -20,7 +19,7 @@ class CallState(Enum):
     ENDED = "ENDED"
 
 
-class CallStopReason(Enum):
+class CallStopReason:
     SIP_ERROR = "SIP_ERROR"
     BYE_FROM_PBX = "BYE_FROM_PBX"
     BYE_FROM_LOCAL = "BYE_FROM_LOCAL"
@@ -60,7 +59,7 @@ class _Call:
     def _stop_media(self):
         self.media_wrapper.stop()
 
-    def _set_state(self, state: CallState) -> None:
+    def _set_state(self, state: str) -> None:
         self.locker.acquire()
         self.call_data['state'] = state
         self.locker.release()

@@ -120,7 +120,6 @@ class SIPImpl:
         self.send_locker.acquire()
         self.socket.send(message_bytes)
         self.send_locker.release()
-        # Возвращаем каждое отправленное сообщение, чтобы была возможность обрабатывать отправленные данные
         return SIPMessage(message_bytes)
 
     def send_register(self, request: Optional[SIPMessage] = None, start_session: bool = True) -> SIPMessage:
@@ -202,7 +201,6 @@ class SIPImpl:
             )
 
         res = self._send_message(message)
-        print(f'sended invite: {res}')
         return res
 
     def send_ack(self, request: SIPMessage) -> SIPMessage:
@@ -237,10 +235,10 @@ class SipFlow(SIPImpl):
         self.register_thread = None  # TODO unfilled
         self.recv_thread = None
 
-        self.first_reg_success = False  # Флаг того, что первая регистрация пройдена успешно, можно начинать звонок
-        self.reg_ended = False  # Флаг того, что сессия завершена (авторизован REGISTER с expires==0)
-        self.trying_end_session = False  # Флаг попытки завершения сессии.
-        # Используется для определения Expires при обработке 401 Unauthorized (REGISTER)
+        self.first_reg_success = False  # The flag that the first registration was successful, you can start the call
+        self.reg_ended = False  # Flag that the session is over (authorized REGISTER with expires==0)
+        self.trying_end_session = False  # Flag of attempt to terminate session
+        # Used to determine Expires when handling 401 Unauthorized (REGISTER)
         self.trying_reg_count = 0
         self.max_trying_reg = 2
 
@@ -281,16 +279,16 @@ class SipFlow(SIPImpl):
                 else:
                     raise RuntimeError('unexpected error')
             elif message.status in (
-                # Вызовы коллбеков это не всегда про ответ в сторону АТС.
-                # Для некоторых статусов это просто изменение состояния инстанса звонка.
+                # Callback calls are not always about a response to the PBX.
+                # For some statuses, this is simply a change in the state of the call instance.
                 SIPStatus.OK,
                 SIPStatus.NOT_FOUND,
                 SIPStatus.SERVICE_UNAVAILABLE,
                 SIPStatus.TRYING,
                 SIPStatus.RINGING,
                 SIPStatus.UNAUTHORIZED,
-                SIPStatus.PROXY_AUTHENTICATION_REQUIRED # 401/407 для инвайта обрабатывается коллбеком звонка,
-                    # т.к. отслеживание попыток происходит для каждого звонка отдельно
+                SIPStatus.PROXY_AUTHENTICATION_REQUIRED # 401/407 for invite is processed by call callback,
+                    # since tracking of attempts occurs for each call separately
             ):
                 self.callback(message)
             else:
@@ -300,7 +298,7 @@ class SipFlow(SIPImpl):
         elif message.method == 'OPTIONS':
             self.send_ok(message)
         elif message.method == 'ACK':
-            # просто игнорируем, это обрабатывать не нужно
+            # just ignore it, no need to process it
             return
         else:
             raise RuntimeError(f'Received an unknown SIP message type: {message.summary()}')
@@ -309,7 +307,7 @@ class SipFlow(SIPImpl):
         if self.NSD:
             raise RuntimeError("Attempted to start already started SIPClient")
         self.NSD = True
-        self.trying_reg_count += 1  # не очень
+        self.trying_reg_count += 1
         self.send_register()
         self.recv_thread = Timer(1, self._manage_recv)
         self.recv_thread.start()
